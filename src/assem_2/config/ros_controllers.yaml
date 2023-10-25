@@ -1,0 +1,23 @@
+controller_joint_names: ['', 'main_plate_joint', 'tray_joint1', 'tray_joint2', ]
+
+
+
+plate_controller:
+  type: position_controllers/JointPositionController
+  joint: main_plate_joint
+
+
+joint1_controller:
+  type: position_controllers/JointPositionController
+  joint: tray_joint1
+
+
+
+joint2_controller:
+  type: position_controllers/JointPositionController
+  joint: tray_joint2
+
+      # Publish joint_states
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50

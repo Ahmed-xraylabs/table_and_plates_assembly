@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="paused" default="false" doc="Start Gazebo paused"/>
+  <include
+    file="$(find gazebo_ros)/launch/empty_world.launch" />
+  <node
+    name="tf_footprint_base"
+    pkg="tf"
+    type="static_transform_publisher"
+    args="0 0 0 0 0 0 base_link base_footprint 40" />
+
+  <param name="robot_description" textfile="$(find assem_2)/urdf/assem_2.urdf" />
+  <node
+    name="spawn_model"
+    pkg="gazebo_ros"
+    type="spawn_model"
+    args="-urdf -param robot_description -model assebly"
+    output="screen" />
+   <node
+    name="fake_joint_calibration"
+    pkg="rostopic"
+    type="rostopic"
+    args="pub /calibrated std_msgs/Bool true" />
+
+  <rosparam
+    file= "$(find assem_2)/config/ros_controllers.yaml"
+    command= "load" />
+  <node 
+    name= "controller_spawner"
+    pkg= "controller_manager"
+    type= "spawner"
+    respawn= "false"
+    output= "screen"
+    args= "plate_controller joint1_controller joint2_controller joint_state_controller" />
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+</launch>
+
+<!-- <launch>
+
+  <arg name="gazebo_gui" default="true" doc="Start Gazebo GUI"/>
+  <arg name="paused" default="false" doc="Start Gazebo paused"/>
+  <arg name="world_name" default="worlds/empty.world" doc="Gazebo world file"/>
+  <arg name="world_pose" default="-x 0 -y 0 -z 0 -R 0 -P 0 -Y 0" doc="Pose to spawn the robot at"/>
+  <arg name="initial_joint_positions" default="" doc="Initial joint configuration of the robot"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch" pass_all_args="true">
+    <arg name="paused" value="true"/>
+
+  </include>
+
+  <param name="robot_description" textfile="$(find assem_2)/urdf/assem_2.urdf" />
+
+
+  <arg name="unpause" value="$(eval '' if arg('paused') else '-unpause')" />
+
+  <node name="spawn_gazebo_model" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model assembely $(arg unpause) $(arg world_pose)"
+    respawn="false" output="screen" />
+
+  <rosparam file="$(find assem_2)/config/ros_controllers.yaml" command = "load" />
+
+
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="plate_controller joint1_controller joint2_controller joint_state_controller" />
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen" />
+
+
+</launch> -->
